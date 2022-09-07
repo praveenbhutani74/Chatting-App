@@ -18,13 +18,13 @@ const SignUp = () => {
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
   const [show, setShow] = useState(false);
-  const [image, setImage] = useState();
-  const [loading, setLoading] = useState(false);
+  const [pic, setPic] = useState();
+  const [picLoading, setPicLoading] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
 
   const ImageDetails = (pics) => {
-    setLoading(true);
+    setPicLoading(true);
     if (pics === undefined) {
       toast({
         title: "Please Select  an Image",
@@ -47,12 +47,12 @@ const SignUp = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setImage(data.url.toString());
-          setLoading(false);
+          setPic(data.url.toString());
+          setPicLoading(false);
         })
         .catch((err) => {
           console.log(err);
-          setLoading(false);
+          setPicLoading(false);
         });
     } else {
       toast({
@@ -64,7 +64,7 @@ const SignUp = () => {
         position: "bottom",
       });
 
-      setLoading(false);
+      setPicLoading(false);
       return;
     }
   };
@@ -73,7 +73,7 @@ const SignUp = () => {
     setShow(!show);
   };
   const submitHandler = async () => {
-    setLoading(true);
+    setPicLoading(true);
     if (!name || !email || !password || !confirmPassword) {
       toast({
         title: "Please Fill all the fields",
@@ -83,9 +83,20 @@ const SignUp = () => {
         isClosable: true,
         position: "bottom",
       });
+      setPicLoading(false);
       return;
     }
-
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords Do Not Match",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    console.log(name, email, password, pic);
     try {
       const config = {
         headers: {
@@ -93,19 +104,19 @@ const SignUp = () => {
         },
       };
 
-      const { data } = axios.post(
-        "/api/user",
+      const { data } = await axios.post(
+        "api/user",
         {
           name,
           email,
           password,
-          image,
+          pic,
         },
         {
           config,
         }
       );
-
+      console.log(data);
       toast({
         title: "SignUP Succesfully",
 
@@ -115,7 +126,7 @@ const SignUp = () => {
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      setLoading(false);
+      setPicLoading(false);
       navigate("/chats");
     } catch (error) {
       toast({
@@ -126,7 +137,7 @@ const SignUp = () => {
         isClosable: true,
         position: "bottom",
       });
-      setLoading(false);
+      setPicLoading(false);
     }
   };
   return (
@@ -193,7 +204,7 @@ const SignUp = () => {
         width="100%"
         style={{ marginTop: 20 }}
         onClick={submitHandler}
-        isLoading={loading}
+        isLoading={picLoading}
       >
         Sign Up
       </Button>

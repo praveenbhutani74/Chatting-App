@@ -4,8 +4,10 @@ const dotenv = require("dotenv");
 const connectDB = require("./config`/db");
 const userRoutes = require("./routes/userRoute");
 const chatRoutes = require("./routes/chatRoutes");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 dotenv.config();
 connectDB();
 
@@ -27,4 +29,4 @@ app.use("/api/chat", chatRoutes);
 
 // const PORT= process.env.PORT||8000;
 
-app.listen(8000, console.log(`running on server ${8000}`));
+app.listen(5000, console.log(`running on server ${5000}`));
